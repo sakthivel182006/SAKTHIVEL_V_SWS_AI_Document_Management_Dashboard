@@ -8,6 +8,9 @@ const MyDocuments = () => {
     const [selectedType, setSelectedType] = useState("all");
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDoc, setSelectedDoc] = useState(null);
+    const [deletingId, setDeletingId] = useState(null);
+    const [downloadingId, setDownloadingId] = useState(null);
+    const [downloadProgress, setDownloadProgress] = useState({});
 
     const getDocuments = async () => {
         try {
@@ -23,20 +26,64 @@ const MyDocuments = () => {
 
     const deleteDocument = async (docId) => {
         try {
+            setDeletingId(docId);
             await api.delete(`/api/upload/${docId}`);
             await getDocuments();
             setShowDeleteModal(false);
             setSelectedDoc(null);
         } catch (error) {
             console.log(error);
+        } finally {
+            setDeletingId(null);
         }
     };
 
-    const downloadDocument = (doc) => {
-        const link = document.createElement('a');
-        link.href = `http://localhost:5000/${doc.filePath}`;
-        link.download = doc.fileName;
-        link.click();
+    const downloadDocument = async (doc) => {
+        try {
+            setDownloadingId(doc._id);
+            
+            const response = await fetch(`http://localhost:5000/${doc.filePath}`);
+            const contentLength = response.headers.get('content-length');
+            const total = parseInt(contentLength, 10);
+            let loaded = 0;
+            
+            const reader = response.body.getReader();
+            const chunks = [];
+            
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                chunks.push(value);
+                loaded += value.length;
+                
+                const percent = Math.round((loaded * 100) / total);
+                setDownloadProgress(prev => ({
+                    ...prev,
+                    [doc._id]: percent
+                }));
+            }
+            
+            const blob = new Blob(chunks);
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = doc.fileName;
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            setTimeout(() => {
+                setDownloadProgress(prev => {
+                    const newProgress = { ...prev };
+                    delete newProgress[doc._id];
+                    return newProgress;
+                });
+                setDownloadingId(null);
+            }, 2000);
+            
+        } catch (error) {
+            console.log(error);
+            setDownloadingId(null);
+        }
     };
 
     useEffect(() => {
@@ -170,6 +217,21 @@ const MyDocuments = () => {
                                         </div>
                                     </div>
 
+                                    {/* Download Progress Bar */}
+                                    {downloadingId === doc._id && downloadProgress[doc._id] && (
+                                        <div className="my-docs-download-progress">
+                                            <div className="my-docs-download-progress-bar">
+                                                <div 
+                                                    className="my-docs-download-progress-fill"
+                                                    style={{ width: `${downloadProgress[doc._id]}%` }}
+                                                ></div>
+                                            </div>
+                                            <span className="my-docs-download-percent">
+                                                {downloadProgress[doc._id]}%
+                                            </span>
+                                        </div>
+                                    )}
+
                                     <div className="my-docs-card-actions">
                                         <a
                                             href={`http://localhost:5000/${doc.filePath}`}
@@ -182,8 +244,18 @@ const MyDocuments = () => {
                                         <button
                                             onClick={() => downloadDocument(doc)}
                                             className="my-docs-btn-download"
+                                            disabled={downloadingId === doc._id}
                                         >
-                                            ⬇️ Download
+                                            {downloadingId === doc._id ? (
+                                                <>
+                                                    <span className="my-docs-btn-spinner"></span>
+                                                    {downloadProgress[doc._id] ? `${downloadProgress[doc._id]}%` : "Downloading..."}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    ⬇️ Download
+                                                </>
+                                            )}
                                         </button>
                                         <button
                                             onClick={() => {
@@ -191,8 +263,13 @@ const MyDocuments = () => {
                                                 setShowDeleteModal(true);
                                             }}
                                             className="my-docs-btn-delete"
+                                            disabled={deletingId === doc._id}
                                         >
-                                            🗑️
+                                            {deletingId === doc._id ? (
+                                                <span className="my-docs-btn-spinner"></span>
+                                            ) : (
+                                                "🗑️"
+                                            )}
                                         </button>
                                     </div>
                                 </div>
@@ -221,8 +298,19 @@ const MyDocuments = () => {
                             <button onClick={() => setShowDeleteModal(false)} className="my-docs-btn-cancel">
                                 Cancel
                             </button>
-                            <button onClick={() => deleteDocument(selectedDoc._id)} className="my-docs-btn-confirm">
-                                Delete
+                            <button 
+                                onClick={() => deleteDocument(selectedDoc._id)} 
+                                className="my-docs-btn-confirm"
+                                disabled={deletingId === selectedDoc._id}
+                            >
+                                {deletingId === selectedDoc._id ? (
+                                    <>
+                                        <span className="my-docs-btn-spinner"></span>
+                                        Deleting...
+                                    </>
+                                ) : (
+                                    "Delete"
+                                )}
                             </button>
                         </div>
                     </div>
@@ -443,6 +531,52 @@ const MyDocuments = () => {
                     display: inline-block;
                 }
 
+                /* Download Progress Bar */
+                .my-docs-download-progress {
+                    margin: 1rem 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .my-docs-download-progress-bar {
+                    flex: 1;
+                    height: 6px;
+                    background: #e2e8f0;
+                    border-radius: 10px;
+                    overflow: hidden;
+                }
+
+                .my-docs-download-progress-fill {
+                    height: 100%;
+                    background: linear-gradient(90deg, #48bb78, #38a169);
+                    border-radius: 10px;
+                    transition: width 0.3s ease;
+                }
+
+                .my-docs-download-percent {
+                    font-size: 0.75rem;
+                    color: #48bb78;
+                    font-weight: 600;
+                    min-width: 45px;
+                }
+
+                /* Button Spinner */
+                .my-docs-btn-spinner {
+                    width: 14px;
+                    height: 14px;
+                    border: 2px solid white;
+                    border-top-color: transparent;
+                    border-radius: 50%;
+                    animation: my-docs-spin 0.6s linear infinite;
+                    display: inline-block;
+                    margin-right: 5px;
+                }
+
+                @keyframes my-docs-spin {
+                    to { transform: rotate(360deg); }
+                }
+
                 .my-docs-card-actions {
                     display: flex;
                     gap: 0.5rem;
@@ -479,7 +613,7 @@ const MyDocuments = () => {
                     color: white;
                 }
 
-                .my-docs-btn-download:hover {
+                .my-docs-btn-download:hover:not(:disabled) {
                     background: #38a169;
                 }
 
@@ -488,8 +622,15 @@ const MyDocuments = () => {
                     color: white;
                 }
 
-                .my-docs-btn-delete:hover {
+                .my-docs-btn-delete:hover:not(:disabled) {
                     background: #e53e3e;
+                }
+
+                .my-docs-btn-download:disabled,
+                .my-docs-btn-delete:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                    transform: none;
                 }
 
                 .my-docs-empty {
@@ -532,10 +673,6 @@ const MyDocuments = () => {
                     border-top-color: white;
                     border-radius: 50%;
                     animation: my-docs-spin 1s linear infinite;
-                }
-
-                @keyframes my-docs-spin {
-                    to { transform: rotate(360deg); }
                 }
 
                 .my-docs-loader p {
@@ -620,6 +757,10 @@ const MyDocuments = () => {
                     font-size: 0.875rem;
                     font-weight: 500;
                     cursor: pointer;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.5rem;
                 }
 
                 .my-docs-btn-cancel {
@@ -636,8 +777,13 @@ const MyDocuments = () => {
                     color: white;
                 }
 
-                .my-docs-btn-confirm:hover {
+                .my-docs-btn-confirm:hover:not(:disabled) {
                     background: #e53e3e;
+                }
+
+                .my-docs-btn-confirm:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
                 }
 
                 @media (max-width: 768px) {

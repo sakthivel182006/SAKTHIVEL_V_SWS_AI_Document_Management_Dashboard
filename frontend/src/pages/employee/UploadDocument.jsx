@@ -6,6 +6,7 @@ function UploadDocument() {
   const [progress, setProgress] = useState({});
   const [status, setStatus] = useState({});
   const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleUpload = async () => {
     if (files.length === 0) {
@@ -14,6 +15,7 @@ function UploadDocument() {
     }
 
     setUploading(true);
+    setLoading(true);
 
     for (const file of files) {
       const formData = new FormData();
@@ -58,6 +60,7 @@ function UploadDocument() {
     }
 
     setUploading(false);
+    setLoading(false);
   };
 
   const removeFile = (fileName) => {
@@ -85,8 +88,9 @@ function UploadDocument() {
             accept=".pdf"
             onChange={(e) => setFiles([...files, ...e.target.files])}
             className="upload-file-input"
+            disabled={loading}
           />
-          <label htmlFor="upload-file-input" className="upload-file-label">
+          <label htmlFor="upload-file-input" className={`upload-file-label ${loading ? 'disabled' : ''}`}>
             Choose PDF Files
           </label>
           <p className="upload-file-hint">Supported format: PDF</p>
@@ -95,11 +99,27 @@ function UploadDocument() {
         {files.length > 0 && (
           <button
             onClick={handleUpload}
-            disabled={uploading}
-            className={`upload-submit-btn ${uploading ? 'upload-submit-disabled' : ''}`}
+            disabled={uploading || loading}
+            className={`upload-submit-btn ${uploading || loading ? 'upload-submit-disabled' : ''}`}
           >
-            {uploading ? "Uploading..." : `Upload ${files.length} File${files.length > 1 ? 's' : ''}`}
+            {loading ? (
+              <>
+                <span className="upload-spinner"></span>
+                Uploading...
+              </>
+            ) : (
+              `Upload ${files.length} File${files.length > 1 ? 's' : ''}`
+            )}
           </button>
+        )}
+
+        {loading && (
+          <div className="upload-loading-overlay">
+            <div className="upload-loading-content">
+              <div className="upload-loading-spinner"></div>
+              <p>Uploading documents. Please wait...</p>
+            </div>
+          </div>
         )}
 
         {files.length > 0 && (
@@ -123,7 +143,7 @@ function UploadDocument() {
                   <button 
                     onClick={() => removeFile(file.name)}
                     className="upload-remove-btn"
-                    disabled={uploading}
+                    disabled={loading}
                   >
                     ✕
                   </button>
@@ -159,6 +179,7 @@ function UploadDocument() {
           background: #f0f2f5;
           padding: 40px 20px;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+          position: relative;
         }
 
         .upload-document-card {
@@ -168,6 +189,7 @@ function UploadDocument() {
           border-radius: 12px;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
           padding: 30px;
+          position: relative;
         }
 
         .upload-document-title {
@@ -185,6 +207,7 @@ function UploadDocument() {
           border: 2px dashed #ddd;
           border-radius: 8px;
           margin-bottom: 20px;
+          position: relative;
         }
 
         .upload-file-input {
@@ -203,8 +226,14 @@ function UploadDocument() {
           transition: background 0.2s;
         }
 
-        .upload-file-label:hover {
+        .upload-file-label:hover:not(.disabled) {
           background: #1d4ed8;
+        }
+
+        .upload-file-label.disabled {
+          background: #9ca3af;
+          cursor: not-allowed;
+          opacity: 0.6;
         }
 
         .upload-file-hint {
@@ -225,6 +254,10 @@ function UploadDocument() {
           cursor: pointer;
           transition: background 0.2s;
           margin-bottom: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
         }
 
         .upload-submit-btn:hover:not(.upload-submit-disabled) {
@@ -234,6 +267,71 @@ function UploadDocument() {
         .upload-submit-disabled {
           background: #9ca3af;
           cursor: not-allowed;
+        }
+
+        .upload-spinner {
+          width: 16px;
+          height: 16px;
+          border: 2px solid white;
+          border-top-color: transparent;
+          border-radius: 50%;
+          animation: upload-spin 0.6s linear infinite;
+          display: inline-block;
+        }
+
+        @keyframes upload-spin {
+          to { transform: rotate(360deg); }
+        }
+
+        /* Loading Overlay */
+        .upload-loading-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 9999;
+          backdrop-filter: blur(4px);
+        }
+
+        .upload-loading-content {
+          background: white;
+          padding: 2rem;
+          border-radius: 12px;
+          text-align: center;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          animation: upload-fadeIn 0.3s ease;
+        }
+
+        @keyframes upload-fadeIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .upload-loading-spinner {
+          width: 50px;
+          height: 50px;
+          border: 4px solid #e5e7eb;
+          border-top-color: #2563eb;
+          border-radius: 50%;
+          animation: upload-spin 1s linear infinite;
+          margin: 0 auto 1rem auto;
+        }
+
+        .upload-loading-content p {
+          color: #4b5563;
+          font-size: 14px;
+          margin: 0;
         }
 
         .upload-files-section {
