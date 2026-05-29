@@ -1,85 +1,68 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import "./Home.css";
 
-const Home = () => {
-
-  const navigate = useNavigate();
-
+function Home() {
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
-      style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80')"
-      }}
-    >
+    <div className="home">
 
-      {/* Dark Grey Overlay */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+      <section className="hero">
 
-      {/* Content */}
-      <div className="relative z-10 backdrop-blur-lg bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-10 max-w-4xl text-center text-white">
+        <div className="hero-content">
 
-        {/* Heading */}
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
-          📦 Warehouse Management System
-        </h1>
+          <span className="badge">
+            Full Stack Assessment Project
+          </span>
 
-        {/* Subtitle */}
-        <p className="text-lg md:text-xl text-gray-200 mb-10 leading-relaxed">
-          Simplify inventory tracking, manage warehouses efficiently, and
-          optimize logistics with a smart and modern platform.
-        </p>
+          <h1>
+            Document Management Dashboard
+          </h1>
 
-        {/* Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center gap-6 mb-10">
+          <p>
+            Upload company PDF documents, monitor upload progress,
+            manage files efficiently, and receive notifications
+            when document processing is completed.
+          </p>
 
-          <button
-            onClick={() => navigate("/product")}
-            className="bg-gray-200 text-gray-900 font-semibold px-8 py-3 rounded-xl shadow-lg hover:bg-white hover:scale-105 transition duration-300"
-          >
-            🛒 Explore Products
-          </button>
+          <div className="hero-buttons">
+            <button className="primary-btn">
+              Upload Documents
+            </button>
 
-          <button
-            onClick={() => navigate("/about")}
-            className="border border-gray-300 px-8 py-3 rounded-xl hover:bg-white hover:text-gray-900 transition duration-300"
-          >
-            📖 Learn More
-          </button>
-
-        </div>
-
-        {/* Features */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
-
-          <div className="bg-white/10 p-4 rounded-xl hover:bg-white/20 transition">
-            <h3 className="font-bold text-lg">📦 Smart Inventory</h3>
-            <p className="text-sm text-gray-300 mt-1">
-              Real-time stock monitoring
-            </p>
-          </div>
-
-          <div className="bg-white/10 p-4 rounded-xl hover:bg-white/20 transition">
-            <h3 className="font-bold text-lg">⚡ Fast Orders</h3>
-            <p className="text-sm text-gray-300 mt-1">
-              Quick and smooth booking
-            </p>
-          </div>
-
-          <div className="bg-white/10 p-4 rounded-xl hover:bg-white/20 transition">
-            <h3 className="font-bold text-lg">🌍 Smart Location</h3>
-            <p className="text-sm text-gray-300 mt-1">
-              Auto warehouse selection
-            </p>
+            <button className="secondary-btn">
+              View Documents
+            </button>
           </div>
 
         </div>
 
-      </div>
+      </section>
+
+      <section className="features">
+
+        <div className="card">
+          <h3>📤 Bulk Upload</h3>
+          <p>
+            Upload one or multiple PDF files simultaneously.
+          </p>
+        </div>
+
+        <div className="card">
+          <h3>📊 Live Progress</h3>
+          <p>
+            Real-time upload tracking for every document.
+          </p>
+        </div>
+
+        <div className="card">
+          <h3>🔔 Notifications</h3>
+          <p>
+            Instant alerts when processing is completed.
+          </p>
+        </div>
+
+      </section>
 
     </div>
   );
-};
+}
 
 export default Home;
