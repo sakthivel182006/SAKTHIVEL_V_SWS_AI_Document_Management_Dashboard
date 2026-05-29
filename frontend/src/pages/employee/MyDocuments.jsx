@@ -217,7 +217,6 @@ const MyDocuments = () => {
                                         </div>
                                     </div>
 
-                                    {/* Download Progress Bar */}
                                     {downloadingId === doc._id && downloadProgress[doc._id] && (
                                         <div className="my-docs-download-progress">
                                             <div className="my-docs-download-progress-bar">
@@ -318,9 +317,15 @@ const MyDocuments = () => {
             )}
 
             <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Livvic:wght@400;500;600;700&display=swap');
+
+                * {
+                    font-family: 'Livvic', sans-serif;
+                }
+
                 .my-docs-container {
                     min-height: 100vh;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: #f0f9ff;
                     padding: 2rem;
                 }
 
@@ -329,8 +334,9 @@ const MyDocuments = () => {
                     margin: 0 auto 2rem auto;
                     background: white;
                     border-radius: 1rem;
-                    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
                     padding: 1.5rem;
+                    border: 1px solid #e2e8f0;
                 }
 
                 .my-docs-header-content {
@@ -345,12 +351,12 @@ const MyDocuments = () => {
                 .my-docs-header-content h1 {
                     font-size: 2rem;
                     font-weight: bold;
-                    color: #1a1a1a;
+                    color: #1e293b;
                     margin: 0;
                 }
 
                 .my-docs-header-content p {
-                    color: #666;
+                    color: #64748b;
                     margin-top: 0.5rem;
                     margin-bottom: 0;
                 }
@@ -359,7 +365,7 @@ const MyDocuments = () => {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
-                    background: #667eea;
+                    background: #2563eb;
                     color: white;
                     padding: 0.5rem 1rem;
                     border-radius: 0.5rem;
@@ -382,20 +388,22 @@ const MyDocuments = () => {
                     left: 0.75rem;
                     top: 50%;
                     transform: translateY(-50%);
-                    color: #999;
+                    color: #94a3b8;
                 }
 
                 .my-docs-search-box input {
                     width: 100%;
                     padding: 0.7rem 0.7rem 0.7rem 2.5rem;
-                    border: 1px solid #ddd;
+                    border: 1px solid #e2e8f0;
                     border-radius: 0.5rem;
                     font-size: 1rem;
                     outline: none;
+                    transition: all 0.2s;
                 }
 
                 .my-docs-search-box input:focus {
-                    border-color: #667eea;
+                    border-color: #2563eb;
+                    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
                 }
 
                 .my-docs-filter-box {
@@ -406,7 +414,7 @@ const MyDocuments = () => {
                 .my-docs-filter-box select {
                     width: 100%;
                     padding: 0.7rem 2rem 0.7rem 0.7rem;
-                    border: 1px solid #ddd;
+                    border: 1px solid #e2e8f0;
                     border-radius: 0.5rem;
                     background: white;
                     font-size: 1rem;
@@ -415,12 +423,16 @@ const MyDocuments = () => {
                     appearance: none;
                 }
 
+                .my-docs-filter-box select:focus {
+                    border-color: #2563eb;
+                }
+
                 .my-docs-filter-arrow {
                     position: absolute;
                     right: 0.75rem;
                     top: 50%;
                     transform: translateY(-50%);
-                    color: #999;
+                    color: #94a3b8;
                     pointer-events: none;
                 }
 
@@ -435,19 +447,20 @@ const MyDocuments = () => {
                 .my-docs-card {
                     background: white;
                     border-radius: 1rem;
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
                     transition: transform 0.3s, box-shadow 0.3s;
                     overflow: hidden;
+                    border: 1px solid #e2e8f0;
                 }
 
                 .my-docs-card:hover {
                     transform: translateY(-5px);
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
                 }
 
                 .my-docs-card-header {
                     height: 0.5rem;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: #2563eb;
                 }
 
                 .my-docs-card-content {
@@ -473,7 +486,7 @@ const MyDocuments = () => {
                 .my-docs-file-details h3 {
                     font-weight: bold;
                     font-size: 1rem;
-                    color: #1a1a1a;
+                    color: #1e293b;
                     margin: 0 0 0.5rem 0;
                     white-space: nowrap;
                     overflow: hidden;
@@ -485,8 +498,8 @@ const MyDocuments = () => {
                     padding: 0.25rem 0.5rem;
                     font-size: 0.7rem;
                     font-weight: 600;
-                    color: #667eea;
-                    background: #f0f0ff;
+                    color: #2563eb;
+                    background: #eff6ff;
                     border-radius: 20px;
                 }
 
@@ -499,39 +512,37 @@ const MyDocuments = () => {
                     align-items: center;
                     gap: 0.5rem;
                     font-size: 0.85rem;
-                    color: #666;
+                    color: #64748b;
                     margin-bottom: 0.5rem;
                 }
 
-                /* Status Styles */
                 .approved-status {
-                    color: #38a169;
+                    color: #059669;
                     font-weight: 600;
-                    background: #f0fff4;
+                    background: #ecfdf5;
                     padding: 0.2rem 0.6rem;
                     border-radius: 20px;
                     display: inline-block;
                 }
 
                 .rejected-status {
-                    color: #e53e3e;
+                    color: #dc2626;
                     font-weight: 600;
-                    background: #fff5f5;
+                    background: #fef2f2;
                     padding: 0.2rem 0.6rem;
                     border-radius: 20px;
                     display: inline-block;
                 }
 
                 .verification-status {
-                    color: #ed8936;
+                    color: #d97706;
                     font-weight: 600;
-                    background: #fffaf0;
+                    background: #fffbeb;
                     padding: 0.2rem 0.6rem;
                     border-radius: 20px;
                     display: inline-block;
                 }
 
-                /* Download Progress Bar */
                 .my-docs-download-progress {
                     margin: 1rem 0;
                     display: flex;
@@ -549,19 +560,18 @@ const MyDocuments = () => {
 
                 .my-docs-download-progress-fill {
                     height: 100%;
-                    background: linear-gradient(90deg, #48bb78, #38a169);
+                    background: #2563eb;
                     border-radius: 10px;
                     transition: width 0.3s ease;
                 }
 
                 .my-docs-download-percent {
                     font-size: 0.75rem;
-                    color: #48bb78;
+                    color: #2563eb;
                     font-weight: 600;
                     min-width: 45px;
                 }
 
-                /* Button Spinner */
                 .my-docs-btn-spinner {
                     width: 14px;
                     height: 14px;
@@ -600,30 +610,30 @@ const MyDocuments = () => {
                 }
 
                 .my-docs-btn-view {
-                    background: #667eea;
+                    background: #2563eb;
                     color: white;
                 }
 
                 .my-docs-btn-view:hover {
-                    background: #5a67d8;
+                    background: #1d4ed8;
                 }
 
                 .my-docs-btn-download {
-                    background: #48bb78;
+                    background: #10b981;
                     color: white;
                 }
 
                 .my-docs-btn-download:hover:not(:disabled) {
-                    background: #38a169;
+                    background: #059669;
                 }
 
                 .my-docs-btn-delete {
-                    background: #f56565;
+                    background: #ef4444;
                     color: white;
                 }
 
                 .my-docs-btn-delete:hover:not(:disabled) {
-                    background: #e53e3e;
+                    background: #dc2626;
                 }
 
                 .my-docs-btn-download:disabled,
@@ -640,6 +650,7 @@ const MyDocuments = () => {
                     border-radius: 1rem;
                     padding: 3rem;
                     text-align: center;
+                    border: 1px solid #e2e8f0;
                 }
 
                 .my-docs-empty-icon {
@@ -649,17 +660,17 @@ const MyDocuments = () => {
 
                 .my-docs-empty h3 {
                     font-size: 1.5rem;
-                    color: #4a5568;
+                    color: #64748b;
                     margin-bottom: 0.5rem;
                 }
 
                 .my-docs-empty p {
-                    color: #a0aec0;
+                    color: #94a3b8;
                 }
 
                 .my-docs-loader {
                     min-height: 100vh;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: #f0f9ff;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -669,15 +680,15 @@ const MyDocuments = () => {
                 .my-docs-spinner {
                     width: 4rem;
                     height: 4rem;
-                    border: 4px solid rgba(255,255,255,0.3);
-                    border-top-color: white;
+                    border: 4px solid #e2e8f0;
+                    border-top-color: #2563eb;
                     border-radius: 50%;
                     animation: my-docs-spin 1s linear infinite;
                 }
 
                 .my-docs-loader p {
                     margin-top: 1rem;
-                    color: white;
+                    color: #64748b;
                 }
 
                 .my-docs-modal {
@@ -722,7 +733,7 @@ const MyDocuments = () => {
 
                 .my-docs-modal-header h3 {
                     margin: 0;
-                    color: #1a1a1a;
+                    color: #1e293b;
                 }
 
                 .my-docs-modal-close {
@@ -730,7 +741,7 @@ const MyDocuments = () => {
                     border: none;
                     font-size: 1.5rem;
                     cursor: pointer;
-                    color: #999;
+                    color: #94a3b8;
                 }
 
                 .my-docs-modal-body {
@@ -739,7 +750,7 @@ const MyDocuments = () => {
 
                 .my-docs-modal-body p {
                     margin: 0;
-                    color: #4a5568;
+                    color: #64748b;
                     line-height: 1.5;
                 }
 
@@ -764,21 +775,21 @@ const MyDocuments = () => {
                 }
 
                 .my-docs-btn-cancel {
-                    background: #e2e8f0;
-                    color: #4a5568;
+                    background: #f1f5f9;
+                    color: #64748b;
                 }
 
                 .my-docs-btn-cancel:hover {
-                    background: #cbd5e0;
+                    background: #e2e8f0;
                 }
 
                 .my-docs-btn-confirm {
-                    background: #f56565;
+                    background: #ef4444;
                     color: white;
                 }
 
                 .my-docs-btn-confirm:hover:not(:disabled) {
-                    background: #e53e3e;
+                    background: #dc2626;
                 }
 
                 .my-docs-btn-confirm:disabled {
