@@ -66,8 +66,8 @@ const MyDocuments = () => {
 
     if (loading) {
         return (
-            <div className="loader-container">
-                <div className="spinner"></div>
+            <div className="my-docs-loader">
+                <div className="my-docs-spinner"></div>
                 <p>Loading your documents...</p>
             </div>
         );
@@ -75,24 +75,22 @@ const MyDocuments = () => {
 
     return (
         <>
-            <div className="documents-container">
-                {/* Header Section */}
-                <div className="header-section">
-                    <div className="header-content">
+            <div className="my-docs-container">
+                <div className="my-docs-header">
+                    <div className="my-docs-header-content">
                         <div>
                             <h1>My Documents</h1>
-                            <p className="subtitle">Manage and organize your uploaded files</p>
+                            <p>Manage and organize your uploaded files</p>
                         </div>
-                        <div className="total-count">
+                        <div className="my-docs-total">
                             <span>📄</span>
                             <span>Total: {filteredDocuments.length} documents</span>
                         </div>
                     </div>
 
-                    {/* Search and Filter Bar */}
-                    <div className="search-filter-bar">
-                        <div className="search-box">
-                            <span className="search-icon">🔍</span>
+                    <div className="my-docs-search-bar">
+                        <div className="my-docs-search-box">
+                            <span className="my-docs-search-icon">🔍</span>
                             <input
                                 type="text"
                                 placeholder="Search by file name..."
@@ -100,7 +98,7 @@ const MyDocuments = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <div className="filter-box">
+                        <div className="my-docs-filter-box">
                             <select
                                 value={selectedType}
                                 onChange={(e) => setSelectedType(e.target.value)}
@@ -111,15 +109,14 @@ const MyDocuments = () => {
                                     </option>
                                 ))}
                             </select>
-                            <span className="filter-arrow">▼</span>
+                            <span className="my-docs-filter-arrow">▼</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Documents Grid */}
                 {filteredDocuments.length === 0 ? (
-                    <div className="empty-state">
-                        <div className="empty-icon">📄</div>
+                    <div className="my-docs-empty">
+                        <div className="my-docs-empty-icon">📄</div>
                         <h3>No documents found</h3>
                         <p>
                             {searchTerm || selectedType !== "all" 
@@ -128,49 +125,63 @@ const MyDocuments = () => {
                         </p>
                     </div>
                 ) : (
-                    <div className="documents-grid">
+                    <div className="my-docs-grid">
                         {filteredDocuments.map((doc) => (
-                            <div key={doc._id} className="document-card">
-                                <div className="card-header"></div>
+                            <div key={doc._id} className="my-docs-card">
+                                <div className="my-docs-card-header"></div>
                                 
-                                <div className="card-content">
-                                    <div className="file-info">
-                                        <div className="file-icon">
+                                <div className="my-docs-card-content">
+                                    <div className="my-docs-file-info">
+                                        <div className="my-docs-file-icon">
                                             {getFileIcon(doc.fileType)}
                                         </div>
-                                        <div className="file-details">
+                                        <div className="my-docs-file-details">
                                             <h3 title={doc.fileName}>
                                                 {doc.fileName}
                                             </h3>
-                                            <span className="file-type-badge">
+                                            <span className="my-docs-file-badge">
                                                 {doc.fileType?.split('/').pop().toUpperCase() || 'DOCUMENT'}
                                             </span>
                                         </div>
                                     </div>
 
-                                    <div className="file-meta">
-                                        <div className="meta-item">
+                                    <div className="my-docs-file-meta">
+                                        <div className="my-docs-meta-item">
                                             <span>💾</span>
                                             <span>{formatFileSize(doc.fileSize)}</span>
                                         </div>
-                                        <div className="meta-item">
+                                        <div className="my-docs-meta-item">
                                             <span>📅</span>
-                                            <span>Uploaded: {new Date(doc.createdAt).toLocaleDateString()}</span>
+                                            <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                        <div className="my-docs-meta-item">
+                                            <span>📌</span>
+                                            <span
+                                                className={
+                                                    doc.status === "APPROVED"
+                                                        ? "approved-status"
+                                                        : doc.status === "REJECTED"
+                                                        ? "rejected-status"
+                                                        : "verification-status"
+                                                }
+                                            >
+                                                {doc.status || "UNDER_VERIFICATION"}
+                                            </span>
                                         </div>
                                     </div>
 
-                                    <div className="card-actions">
+                                    <div className="my-docs-card-actions">
                                         <a
                                             href={`http://localhost:5000/${doc.filePath}`}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="btn-view"
+                                            className="my-docs-btn-view"
                                         >
                                             👁️ View
                                         </a>
                                         <button
                                             onClick={() => downloadDocument(doc)}
-                                            className="btn-download"
+                                            className="my-docs-btn-download"
                                         >
                                             ⬇️ Download
                                         </button>
@@ -179,7 +190,7 @@ const MyDocuments = () => {
                                                 setSelectedDoc(doc);
                                                 setShowDeleteModal(true);
                                             }}
-                                            className="btn-delete"
+                                            className="my-docs-btn-delete"
                                         >
                                             🗑️
                                         </button>
@@ -191,27 +202,26 @@ const MyDocuments = () => {
                 )}
             </div>
 
-            {/* Delete Confirmation Modal */}
             {showDeleteModal && selectedDoc && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <div className="modal-header">
+                <div className="my-docs-modal">
+                    <div className="my-docs-modal-content">
+                        <div className="my-docs-modal-header">
                             <h3>Delete Document</h3>
-                            <button onClick={() => setShowDeleteModal(false)} className="modal-close">
+                            <button onClick={() => setShowDeleteModal(false)} className="my-docs-modal-close">
                                 ×
                             </button>
                         </div>
-                        <div className="modal-body">
+                        <div className="my-docs-modal-body">
                             <p>
                                 Are you sure you want to delete <strong>{selectedDoc.fileName}</strong>?
                                 This action cannot be undone.
                             </p>
                         </div>
-                        <div className="modal-footer">
-                            <button onClick={() => setShowDeleteModal(false)} className="btn-cancel">
+                        <div className="my-docs-modal-footer">
+                            <button onClick={() => setShowDeleteModal(false)} className="my-docs-btn-cancel">
                                 Cancel
                             </button>
-                            <button onClick={() => deleteDocument(selectedDoc._id)} className="btn-confirm-delete">
+                            <button onClick={() => deleteDocument(selectedDoc._id)} className="my-docs-btn-confirm">
                                 Delete
                             </button>
                         </div>
@@ -219,25 +229,23 @@ const MyDocuments = () => {
                 </div>
             )}
 
-            <style jsx>{`
-                /* Container Styles */
-                .documents-container {
+            <style>{`
+                .my-docs-container {
                     min-height: 100vh;
-                    background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     padding: 2rem;
                 }
 
-                /* Header Section */
-                .header-section {
+                .my-docs-header {
                     max-width: 1280px;
                     margin: 0 auto 2rem auto;
                     background: white;
                     border-radius: 1rem;
-                    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
                     padding: 1.5rem;
                 }
 
-                .header-content {
+                .my-docs-header-content {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
@@ -246,77 +254,71 @@ const MyDocuments = () => {
                     margin-bottom: 1.5rem;
                 }
 
-                .header-content h1 {
-                    font-size: 2.5rem;
+                .my-docs-header-content h1 {
+                    font-size: 2rem;
                     font-weight: bold;
-                    background: linear-gradient(135deg, #2563eb, #4f46e5);
-                    -webkit-background-clip: text;
-                    background-clip: text;
-                    color: transparent;
+                    color: #1a1a1a;
                     margin: 0;
                 }
 
-                .subtitle {
-                    color: #6b7280;
+                .my-docs-header-content p {
+                    color: #666;
                     margin-top: 0.5rem;
                     margin-bottom: 0;
                 }
 
-                .total-count {
+                .my-docs-total {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
-                    background: #eff6ff;
+                    background: #667eea;
+                    color: white;
                     padding: 0.5rem 1rem;
                     border-radius: 0.5rem;
                     font-weight: 600;
-                    color: #374151;
                 }
 
-                /* Search and Filter Bar */
-                .search-filter-bar {
+                .my-docs-search-bar {
                     display: flex;
                     gap: 1rem;
                     flex-wrap: wrap;
                 }
 
-                .search-box {
+                .my-docs-search-box {
                     flex: 1;
                     position: relative;
                 }
 
-                .search-icon {
+                .my-docs-search-icon {
                     position: absolute;
                     left: 0.75rem;
                     top: 50%;
                     transform: translateY(-50%);
-                    color: #9ca3af;
+                    color: #999;
                 }
 
-                .search-box input {
+                .my-docs-search-box input {
                     width: 100%;
-                    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
-                    border: 1px solid #d1d5db;
+                    padding: 0.7rem 0.7rem 0.7rem 2.5rem;
+                    border: 1px solid #ddd;
                     border-radius: 0.5rem;
                     font-size: 1rem;
                     outline: none;
-                    transition: all 0.3s;
                 }
 
-                .search-box input:focus {
-                    border-color: #3b82f6;
-                    ring: 2px solid #3b82f6;
+                .my-docs-search-box input:focus {
+                    border-color: #667eea;
                 }
 
-                .filter-box {
+                .my-docs-filter-box {
                     position: relative;
                     min-width: 200px;
                 }
 
-                .filter-box select {
+                .my-docs-filter-box select {
                     width: 100%;
-                    padding: 0.5rem 2rem 0.5rem 0.75rem;
-                    border: 1px solid #d1d5db;
+                    padding: 0.7rem 2rem 0.7rem 0.7rem;
+                    border: 1px solid #ddd;
                     border-radius: 0.5rem;
                     background: white;
                     font-size: 1rem;
@@ -325,17 +327,16 @@ const MyDocuments = () => {
                     appearance: none;
                 }
 
-                .filter-arrow {
+                .my-docs-filter-arrow {
                     position: absolute;
                     right: 0.75rem;
                     top: 50%;
                     transform: translateY(-50%);
-                    color: #9ca3af;
+                    color: #999;
                     pointer-events: none;
                 }
 
-                /* Documents Grid */
-                .documents-grid {
+                .my-docs-grid {
                     max-width: 1280px;
                     margin: 0 auto;
                     display: grid;
@@ -343,192 +344,212 @@ const MyDocuments = () => {
                     gap: 1.5rem;
                 }
 
-                /* Document Card */
-                .document-card {
+                .my-docs-card {
                     background: white;
                     border-radius: 1rem;
-                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    transition: transform 0.3s, box-shadow 0.3s;
                     overflow: hidden;
                 }
 
-                .document-card:hover {
-                    transform: translateY(-4px);
-                    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+                .my-docs-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
                 }
 
-                .card-header {
+                .my-docs-card-header {
                     height: 0.5rem;
-                    background: linear-gradient(135deg, #3b82f6, #4f46e5);
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 }
 
-                .card-content {
+                .my-docs-card-content {
                     padding: 1.5rem;
                 }
 
-                .file-info {
+                .my-docs-file-info {
                     display: flex;
                     align-items: center;
                     gap: 0.75rem;
                     margin-bottom: 1rem;
                 }
 
-                .file-icon {
+                .my-docs-file-icon {
                     font-size: 3rem;
                 }
 
-                .file-details {
+                .my-docs-file-details {
                     flex: 1;
                     min-width: 0;
                 }
 
-                .file-details h3 {
+                .my-docs-file-details h3 {
                     font-weight: bold;
-                    font-size: 1.125rem;
-                    color: #1f2937;
+                    font-size: 1rem;
+                    color: #1a1a1a;
                     margin: 0 0 0.5rem 0;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
 
-                .file-type-badge {
+                .my-docs-file-badge {
                     display: inline-block;
                     padding: 0.25rem 0.5rem;
-                    font-size: 0.75rem;
+                    font-size: 0.7rem;
                     font-weight: 600;
-                    color: #2563eb;
-                    background: #eff6ff;
-                    border-radius: 9999px;
+                    color: #667eea;
+                    background: #f0f0ff;
+                    border-radius: 20px;
                 }
 
-                .file-meta {
-                    margin-top: 1rem;
-                    space-y: 0.5rem;
+                .my-docs-file-meta {
+                    margin: 1rem 0;
                 }
 
-                .meta-item {
+                .my-docs-meta-item {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
-                    font-size: 0.875rem;
-                    color: #4b5563;
+                    font-size: 0.85rem;
+                    color: #666;
                     margin-bottom: 0.5rem;
                 }
 
-                .card-actions {
-                    display: flex;
-                    gap: 0.5rem;
-                    margin-top: 1.5rem;
+                /* Status Styles */
+                .approved-status {
+                    color: #38a169;
+                    font-weight: 600;
+                    background: #f0fff4;
+                    padding: 0.2rem 0.6rem;
+                    border-radius: 20px;
+                    display: inline-block;
                 }
 
-                .btn-view, .btn-download, .btn-delete {
+                .rejected-status {
+                    color: #e53e3e;
+                    font-weight: 600;
+                    background: #fff5f5;
+                    padding: 0.2rem 0.6rem;
+                    border-radius: 20px;
+                    display: inline-block;
+                }
+
+                .verification-status {
+                    color: #ed8936;
+                    font-weight: 600;
+                    background: #fffaf0;
+                    padding: 0.2rem 0.6rem;
+                    border-radius: 20px;
+                    display: inline-block;
+                }
+
+                .my-docs-card-actions {
+                    display: flex;
+                    gap: 0.5rem;
+                    margin-top: 1rem;
+                }
+
+                .my-docs-btn-view, .my-docs-btn-download, .my-docs-btn-delete {
                     flex: 1;
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
                     gap: 0.5rem;
-                    padding: 0.5rem 1rem;
+                    padding: 0.5rem;
                     border: none;
                     border-radius: 0.5rem;
-                    font-size: 0.875rem;
+                    font-size: 0.85rem;
                     font-weight: 500;
                     cursor: pointer;
                     transition: all 0.2s;
                     text-decoration: none;
                 }
 
-                .btn-view {
-                    background: #2563eb;
+                .my-docs-btn-view {
+                    background: #667eea;
                     color: white;
                 }
 
-                .btn-view:hover {
-                    background: #1d4ed8;
+                .my-docs-btn-view:hover {
+                    background: #5a67d8;
                 }
 
-                .btn-download {
-                    background: #4b5563;
+                .my-docs-btn-download {
+                    background: #48bb78;
                     color: white;
                 }
 
-                .btn-download:hover {
-                    background: #374151;
+                .my-docs-btn-download:hover {
+                    background: #38a169;
                 }
 
-                .btn-delete {
-                    background: #dc2626;
+                .my-docs-btn-delete {
+                    background: #f56565;
                     color: white;
                 }
 
-                .btn-delete:hover {
-                    background: #b91c1c;
+                .my-docs-btn-delete:hover {
+                    background: #e53e3e;
                 }
 
-                /* Empty State */
-                .empty-state {
+                .my-docs-empty {
                     max-width: 1280px;
                     margin: 0 auto;
                     background: white;
                     border-radius: 1rem;
-                    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
                     padding: 3rem;
                     text-align: center;
                 }
 
-                .empty-icon {
-                    font-size: 6rem;
+                .my-docs-empty-icon {
+                    font-size: 4rem;
                     margin-bottom: 1rem;
-                    color: #d1d5db;
                 }
 
-                .empty-state h3 {
+                .my-docs-empty h3 {
                     font-size: 1.5rem;
-                    font-weight: 600;
-                    color: #4b5563;
+                    color: #4a5568;
                     margin-bottom: 0.5rem;
                 }
 
-                .empty-state p {
-                    color: #9ca3af;
+                .my-docs-empty p {
+                    color: #a0aec0;
                 }
 
-                /* Loading Spinner */
-                .loader-container {
+                .my-docs-loader {
                     min-height: 100vh;
-                    background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
                 }
 
-                .spinner {
+                .my-docs-spinner {
                     width: 4rem;
                     height: 4rem;
-                    border: 4px solid #e5e7eb;
-                    border-top-color: #2563eb;
+                    border: 4px solid rgba(255,255,255,0.3);
+                    border-top-color: white;
                     border-radius: 50%;
-                    animation: spin 1s linear infinite;
+                    animation: my-docs-spin 1s linear infinite;
                 }
 
-                @keyframes spin {
+                @keyframes my-docs-spin {
                     to { transform: rotate(360deg); }
                 }
 
-                .loader-container p {
+                .my-docs-loader p {
                     margin-top: 1rem;
-                    color: #4b5563;
+                    color: white;
                 }
 
-                /* Modal Styles */
-                .modal-overlay {
+                .my-docs-modal {
                     position: fixed;
                     top: 0;
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    background: rgba(0, 0, 0, 0.5);
+                    background: rgba(0,0,0,0.5);
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -536,15 +557,15 @@ const MyDocuments = () => {
                     padding: 1rem;
                 }
 
-                .modal-content {
+                .my-docs-modal-content {
                     background: white;
                     border-radius: 1rem;
-                    max-width: 28rem;
+                    max-width: 400px;
                     width: 100%;
-                    animation: fadeIn 0.3s ease;
+                    animation: my-docs-fadeIn 0.3s;
                 }
 
-                @keyframes fadeIn {
+                @keyframes my-docs-fadeIn {
                     from {
                         opacity: 0;
                         transform: scale(0.95);
@@ -555,98 +576,84 @@ const MyDocuments = () => {
                     }
                 }
 
-                .modal-header {
+                .my-docs-modal-header {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                     padding: 1.5rem 1.5rem 0 1.5rem;
                 }
 
-                .modal-header h3 {
-                    font-size: 1.25rem;
-                    font-weight: bold;
-                    color: #1f2937;
+                .my-docs-modal-header h3 {
                     margin: 0;
+                    color: #1a1a1a;
                 }
 
-                .modal-close {
+                .my-docs-modal-close {
                     background: none;
                     border: none;
                     font-size: 1.5rem;
                     cursor: pointer;
-                    color: #9ca3af;
-                    transition: color 0.2s;
+                    color: #999;
                 }
 
-                .modal-close:hover {
-                    color: #4b5563;
-                }
-
-                .modal-body {
+                .my-docs-modal-body {
                     padding: 1.5rem;
                 }
 
-                .modal-body p {
-                    color: #4b5563;
+                .my-docs-modal-body p {
                     margin: 0;
+                    color: #4a5568;
                     line-height: 1.5;
                 }
 
-                .modal-footer {
+                .my-docs-modal-footer {
                     display: flex;
                     gap: 0.75rem;
                     padding: 0 1.5rem 1.5rem 1.5rem;
                 }
 
-                .btn-cancel, .btn-confirm-delete {
+                .my-docs-btn-cancel, .my-docs-btn-confirm {
                     flex: 1;
-                    padding: 0.5rem 1rem;
+                    padding: 0.5rem;
                     border: none;
                     border-radius: 0.5rem;
                     font-size: 0.875rem;
                     font-weight: 500;
                     cursor: pointer;
-                    transition: all 0.2s;
                 }
 
-                .btn-cancel {
-                    background: white;
-                    border: 1px solid #d1d5db;
-                    color: #374151;
+                .my-docs-btn-cancel {
+                    background: #e2e8f0;
+                    color: #4a5568;
                 }
 
-                .btn-cancel:hover {
-                    background: #f9fafb;
+                .my-docs-btn-cancel:hover {
+                    background: #cbd5e0;
                 }
 
-                .btn-confirm-delete {
-                    background: #dc2626;
+                .my-docs-btn-confirm {
+                    background: #f56565;
                     color: white;
                 }
 
-                .btn-confirm-delete:hover {
-                    background: #b91c1c;
+                .my-docs-btn-confirm:hover {
+                    background: #e53e3e;
                 }
 
-                /* Responsive Design */
                 @media (max-width: 768px) {
-                    .documents-container {
+                    .my-docs-container {
                         padding: 1rem;
                     }
-
-                    .header-content h1 {
-                        font-size: 1.875rem;
-                    }
-
-                    .documents-grid {
+                    
+                    .my-docs-grid {
                         grid-template-columns: 1fr;
                     }
-
-                    .search-filter-bar {
+                    
+                    .my-docs-search-bar {
                         flex-direction: column;
                     }
-
-                    .filter-box {
+                    
+                    .my-docs-filter-box {
                         min-width: auto;
                     }
                 }

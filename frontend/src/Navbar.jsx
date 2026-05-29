@@ -22,12 +22,12 @@ function Navbar() {
         </li>
 
         <li>
-          <Link to="/notifications">Notifications</Link>
+          <Link to="/updatedocuments">Track Status</Link>
         </li>
       </ul>
 
       <button className="upload-btn">
-        Upload PDF
+        Register/Login
       </button>
     </nav>
   );
