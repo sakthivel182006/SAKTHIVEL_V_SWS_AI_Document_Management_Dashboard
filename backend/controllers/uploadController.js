@@ -1,5 +1,8 @@
 import Document from "../models/Document.js";
 
+import sendEmail from "../utils/sendEmail.js";
+import {documentUploadedTemplate,documentStatusTemplate} from "../utils/emailTemplates.js";
+
 
 // Upload Document
 
@@ -38,6 +41,16 @@ export const uploadDocument = async (req, res) => {
                 });
 
             uploadedFiles.push(document);
+
+            await sendEmail(
+    "sakthivelv202222@gmail.com",
+    "Document Uploaded",
+    documentUploadedTemplate(
+        file.originalname
+    )
+);
+
+
 
         }
 
@@ -234,6 +247,16 @@ export const updateDocumentStatus = async (req, res) => {
             });
 
         }
+
+
+        await sendEmail(
+    "sakthivelv202222@gmail.com",
+    "Document Status Updated",
+    documentStatusTemplate(
+        document.fileName,
+        status
+    )
+);
 
         res.status(200).json({
             success: true,
